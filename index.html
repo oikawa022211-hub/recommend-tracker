@@ -15,313 +15,282 @@
   <title>推し活家計簿</title>
   <style>
     :root {
-      --pink:       #D4537E;
-      --pink-dark:  #A33D60;
-      --pink-bg:    #FBF0F4;
-      --green:      #1D9E75;
-      --green-bg:   #E8F7F2;
-      --purple:     #7F77DD;
-      --purple-bg:  #F0EFFD;
-      --amber:      #BA7517;
-      --amber-bg:   #FEF4E4;
-      --bg:         #F5F5F7;
-      --surface:    #FFFFFF;
-      --text:       #111827;
-      --text-sub:   #6B7280;
-      --text-hint:  #9CA3AF;
-      --border:     rgba(0,0,0,0.08);
-      --nav-h:      60px;
-      --radius-sm:  10px;
-      --radius-md:  14px;
-      --radius-lg:  20px;
+      --pink:      #D4537E;
+      --pink-dark: #A33D60;
+      --green:     #1D9E75;
+      --purple:    #7F77DD;
+      --amber:     #BA7517;
+      --bg:        #F5F5F7;
+      --surface:   #FFFFFF;
+      --text:      #111827;
+      --text-sub:  #6B7280;
+      --text-hint: #9CA3AF;
+      --border:    rgba(0,0,0,0.08);
+      --radius-sm: 10px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
     body {
-      font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100svh;
-      overscroll-behavior: none;
+      font-family: 'Noto Sans JP', -apple-system, sans-serif;
+      background: var(--bg); color: var(--text);
+      min-height: 100svh; overscroll-behavior: none;
       -webkit-font-smoothing: antialiased;
     }
-
-    #app {
-      max-width: 430px;
-      margin: 0 auto;
-      min-height: 100svh;
-      position: relative;
-      background: var(--bg);
-    }
+    #app { max-width: 430px; margin: 0 auto; min-height: 100svh; background: var(--bg); }
 
     /* ── ヘッダー ── */
     .header {
-      position: sticky;
-      top: 0;
-      z-index: 30;
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 30;
+      background: var(--surface); border-bottom: 1px solid var(--border);
       padding: env(safe-area-inset-top, 44px) 20px 14px;
     }
-    .header h1 {
-      font-size: 20px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      color: var(--text);
-    }
+    .header h1 { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 7px; }
     .header h1 .star { color: var(--pink); }
-    .header-sub {
-      font-size: 12px;
-      color: var(--text-sub);
-      margin-top: 2px;
-    }
+    .header-sub { font-size: 12px; color: var(--text-sub); margin-top: 2px; }
 
     /* ── コンテンツ ── */
-    .content {
-      padding: 16px 16px calc(var(--nav-h) + env(safe-area-inset-bottom, 16px) + 16px);
-      min-height: 100svh;
-    }
+    .content { padding: 16px 16px calc(68px + env(safe-area-inset-bottom, 16px) + 8px); }
 
     /* ── サマリーカード ── */
     .summary-card {
       background: linear-gradient(135deg, var(--pink) 0%, var(--pink-dark) 100%);
-      color: white;
-      border-radius: var(--radius-lg);
-      padding: 20px 22px;
-      margin-bottom: 14px;
+      color: white; border-radius: var(--radius-lg);
+      padding: 20px 22px; margin-bottom: 14px;
     }
-    .summary-label { font-size: 13px; opacity: 0.85; margin-bottom: 8px; }
+    .summary-label { font-size: 13px; opacity: .85; margin-bottom: 8px; }
     .summary-amount { font-size: 34px; font-weight: 700; letter-spacing: -1px; line-height: 1; }
     .summary-row {
-      display: flex;
-      gap: 16px;
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid rgba(255,255,255,0.25);
+      display: flex; gap: 16px; margin-top: 12px;
+      padding-top: 12px; border-top: 1px solid rgba(255,255,255,.25);
     }
-    .summary-mini { font-size: 12px; opacity: 0.85; }
+    .summary-mini { font-size: 12px; opacity: .85; }
     .summary-mini strong { display: block; font-size: 14px; font-weight: 700; opacity: 1; margin-top: 1px; }
 
-    /* ── カテゴリカード ── */
-    .section-title {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-sub);
-      margin-bottom: 8px;
-    }
+    /* ── ホームカテゴリカード ── */
+    .section-title { font-size: 13px; font-weight: 500; color: var(--text-sub); margin-bottom: 8px; }
     .cat-card {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: var(--surface);
-      border-radius: var(--radius-sm);
-      padding: 12px 14px;
-      margin-bottom: 8px;
+      display: flex; align-items: center; gap: 12px;
+      background: var(--surface); border-radius: var(--radius-sm);
+      padding: 13px 14px; margin-bottom: 8px;
+      width: 100%; border: 1px solid transparent;
+      cursor: pointer; text-align: left; font-family: inherit;
+      transition: transform .12s, border-color .15s;
     }
+    .cat-card:active { transform: scale(0.98); border-color: var(--border); }
     .cat-icon-box {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 21px;
-      flex-shrink: 0;
+      width: 40px; height: 40px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 21px; flex-shrink: 0;
     }
     .cat-card-info { flex: 1; min-width: 0; }
     .cat-card-name { font-size: 14px; font-weight: 500; }
     .cat-card-count { font-size: 11px; color: var(--text-sub); margin-top: 1px; }
     .progress-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 6px; overflow: hidden; }
-    .progress-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
-    .cat-card-amount { font-size: 15px; font-weight: 700; flex-shrink: 0; }
+    .progress-fill { height: 100%; border-radius: 2px; transition: width .5s ease; }
+    .cat-card-amount { font-size: 16px; font-weight: 700; flex-shrink: 0; }
 
-    /* ── フォーム ── */
-    .form-card {
-      background: var(--surface);
-      border-radius: var(--radius-md);
-      padding: 18px 16px;
+    /* ── 詳細記録カード ── */
+    .detail-card {
+      background: var(--surface); border-radius: var(--radius-md);
+      margin-bottom: 12px; overflow: hidden;
     }
-    .form-group { margin-bottom: 18px; }
-    .form-group:last-child { margin-bottom: 0; }
-    .form-label { font-size: 13px; font-weight: 500; color: var(--text-sub); display: block; margin-bottom: 7px; }
-    .form-input {
-      width: 100%;
-      padding: 12px 14px;
-      border: 1.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      background: var(--bg);
-      font-family: inherit;
-      font-size: 15px;
-      color: var(--text);
-      appearance: none;
-      -webkit-appearance: none;
-      transition: border-color 0.2s;
+    .detail-card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 14px 10px;
     }
-    .form-input:focus { outline: none; border-color: var(--pink); background: var(--surface); }
+    .detail-header-left { display: flex; align-items: center; gap: 10px; }
+    .detail-icon {
+      width: 38px; height: 38px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 19px; flex-shrink: 0;
+    }
+    .detail-cat { font-size: 13px; font-weight: 500; }
+    .detail-date { font-size: 11px; color: var(--text-sub); margin-top: 1px; }
+    .detail-amount { font-size: 18px; font-weight: 700; }
+    .detail-memo {
+      font-size: 13px; color: var(--text-sub);
+      padding: 0 14px 10px; line-height: 1.5;
+    }
+    .detail-photo {
+      width: 100%; max-height: 220px; object-fit: cover;
+      display: block; cursor: pointer;
+    }
+    .detail-actions {
+      display: flex; border-top: 1px solid var(--border);
+    }
+    .btn-action {
+      flex: 1; padding: 11px 8px; border: none; background: none;
+      font-family: inherit; font-size: 13px; font-weight: 500;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px;
+      transition: background .15s;
+    }
+    .btn-action:active { background: var(--bg); }
+    .btn-action + .btn-action { border-left: 1px solid var(--border); }
+    .btn-action.edit { color: var(--text-sub); }
+    .btn-action.del  { color: #E24B4A; }
 
-    /* カテゴリ選択 */
-    .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .cat-option {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      padding: 11px 12px;
-      border-radius: var(--radius-sm);
-      border: 1.5px solid var(--border);
-      background: var(--bg);
-      cursor: pointer;
-      font-family: inherit;
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--text);
-      transition: all 0.15s;
-      user-select: none;
-    }
-    .cat-option:active { transform: scale(0.97); }
-    .cat-option.selected { border-width: 2px; }
-
-    /* 追加ボタン */
-    .btn-add {
-      width: 100%;
-      padding: 15px;
-      background: var(--pink);
-      color: white;
-      border: none;
-      border-radius: var(--radius-sm);
-      font-family: inherit;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      letter-spacing: 0.02em;
-      transition: opacity 0.15s, transform 0.1s;
-    }
-    .btn-add:active { opacity: 0.88; transform: scale(0.99); }
-    .btn-add:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    /* ── 履歴 ── */
+    /* ── 履歴リスト ── */
     .month-label {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-sub);
-      margin: 16px 0 8px;
-      letter-spacing: 0.04em;
+      font-size: 12px; font-weight: 500; color: var(--text-sub);
+      margin: 16px 0 8px; letter-spacing: .04em;
     }
     .month-label:first-child { margin-top: 0; }
     .history-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--surface);
-      border-radius: var(--radius-sm);
-      padding: 11px 12px;
-      margin-bottom: 6px;
+      display: flex; align-items: center; gap: 10px;
+      background: var(--surface); border-radius: var(--radius-sm);
+      padding: 11px 12px; margin-bottom: 6px;
     }
     .history-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      flex-shrink: 0;
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
     }
     .history-info { flex: 1; min-width: 0; }
     .history-memo { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .history-meta { font-size: 11px; color: var(--text-sub); margin-top: 2px; }
-    .history-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-    .history-amount { font-size: 14px; font-weight: 700; }
-    .btn-del {
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: var(--text-hint);
-      padding: 5px;
-      border-radius: 8px;
-      font-size: 14px;
-      line-height: 1;
-      transition: color 0.15s, background 0.15s;
+    .history-right { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
+    .history-thumb {
+      width: 36px; height: 36px; object-fit: cover;
+      border-radius: 6px; cursor: pointer; flex-shrink: 0; border: 1px solid var(--border);
     }
-    .btn-del:hover { color: #E24B4A; background: #FFF0F0; }
+    .history-amount { font-size: 14px; font-weight: 700; margin-right: 2px; }
+    .btn-icon {
+      background: none; border: none; cursor: pointer;
+      color: var(--text-hint); padding: 5px; border-radius: 8px;
+      font-size: 14px; line-height: 1; transition: color .15s, background .15s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .btn-icon.edit:hover { color: var(--text-sub); background: var(--bg); }
+    .btn-icon.del:hover  { color: #E24B4A; background: #FFF0F0; }
 
     /* ── 空状態 ── */
-    .empty {
-      text-align: center;
-      padding: 48px 20px;
-      color: var(--text-hint);
-    }
+    .empty { text-align: center; padding: 48px 20px; color: var(--text-hint); }
     .empty .emoji { font-size: 44px; margin-bottom: 12px; }
     .empty p { font-size: 14px; line-height: 1.7; }
 
-    /* ── ナビゲーション ── */
+    /* ── ナビゲーション（3タブ）── */
     .nav {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 430px;
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      display: flex;
-      z-index: 40;
+      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 430px;
+      background: var(--surface); border-top: 1px solid var(--border);
+      display: flex; z-index: 40;
       padding-bottom: env(safe-area-inset-bottom, 0px);
     }
     .nav-btn {
-      flex: 1;
-      padding: 10px 4px 8px;
-      border: none;
-      background: none;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-      font-family: inherit;
-      font-size: 10px;
-      font-weight: 500;
-      color: var(--text-hint);
-      transition: color 0.15s;
-      user-select: none;
+      flex: 1; padding: 10px 4px 8px; border: none; background: none;
+      cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px;
+      font-family: inherit; font-size: 10px; font-weight: 500; color: var(--text-hint);
+      transition: color .15s;
     }
     .nav-btn.active { color: var(--pink); }
-    .nav-btn svg { width: 24px; height: 24px; stroke-width: 2; }
-    .nav-add-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: var(--pink);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      margin-bottom: -2px;
-      box-shadow: 0 4px 12px rgba(212,83,126,0.4);
-      transition: transform 0.15s;
+    .nav-btn svg { width: 22px; height: 22px; stroke-width: 2; }
+
+    /* ── モーダル ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.45);
+      z-index: 50; display: flex; align-items: flex-end;
+      opacity: 0; pointer-events: none; transition: opacity .25s ease;
     }
-    .nav-btn.active .nav-add-icon,
-    .nav-btn:active .nav-add-icon { transform: scale(0.93); }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal-sheet {
+      background: var(--surface); border-radius: 20px 20px 0 0;
+      padding: 0 16px calc(16px + env(safe-area-inset-bottom, 0px));
+      width: 100%; max-width: 430px; margin: 0 auto;
+      max-height: 92svh; overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform .3s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    .modal-overlay.open .modal-sheet { transform: translateY(0); }
+    .modal-handle { display: flex; justify-content: center; padding: 10px 0 4px; }
+    .modal-handle-bar { width: 36px; height: 4px; background: var(--border); border-radius: 2px; }
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 0 16px;
+    }
+    .modal-title { font-size: 16px; font-weight: 700; }
+    .modal-cancel, .modal-ok {
+      background: none; border: none; cursor: pointer;
+      font-family: inherit; font-size: 14px; padding: 4px 2px;
+    }
+    .modal-cancel { color: var(--text-sub); }
+    .modal-ok { color: var(--pink); font-weight: 700; }
+
+    /* ── フォーム ── */
+    .form-group { margin-bottom: 18px; }
+    .form-label { font-size: 13px; font-weight: 500; color: var(--text-sub); display: block; margin-bottom: 7px; }
+    .form-input {
+      width: 100%; padding: 12px 14px;
+      border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      background: var(--bg); font-family: inherit; font-size: 15px; color: var(--text);
+      appearance: none; -webkit-appearance: none; transition: border-color .2s;
+    }
+    .form-input:focus { outline: none; border-color: var(--pink); background: var(--surface); }
+    .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .cat-option {
+      display: flex; align-items: center; gap: 7px;
+      padding: 11px 12px; border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border); background: var(--bg);
+      cursor: pointer; font-family: inherit; font-size: 14px; font-weight: 500;
+      color: var(--text); transition: all .15s; user-select: none;
+    }
+    .cat-option:active { transform: scale(0.97); }
+    .cat-option.selected { border-width: 2px; }
+
+    /* ── 写真 ── */
+    .photo-upload-btn {
+      width: 100%; padding: 12px; border-radius: var(--radius-sm);
+      border: 1.5px dashed var(--border); background: var(--bg);
+      font-family: inherit; font-size: 14px; color: var(--text-sub);
+      cursor: pointer; transition: border-color .2s, color .2s;
+    }
+    .photo-upload-btn:hover { border-color: var(--pink); color: var(--pink); }
+    .photo-preview { position: relative; }
+    .photo-preview img {
+      width: 100%; max-height: 200px; object-fit: cover;
+      border-radius: var(--radius-sm); display: block; cursor: pointer;
+    }
+    .photo-remove {
+      position: absolute; top: 6px; right: 6px;
+      background: rgba(0,0,0,.55); color: white; border: none;
+      border-radius: 50%; width: 24px; height: 24px; font-size: 12px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ── 保存ボタン ── */
+    .btn-save {
+      width: 100%; padding: 15px; background: var(--pink); color: white;
+      border: none; border-radius: var(--radius-sm);
+      font-family: inherit; font-size: 16px; font-weight: 700;
+      cursor: pointer; transition: opacity .15s, transform .1s; margin-top: 4px;
+    }
+    .btn-save:active { opacity: .88; transform: scale(0.99); }
+
+    /* ── 画像ビューア ── */
+    .img-viewer {
+      position: fixed; inset: 0; background: rgba(0,0,0,.92);
+      z-index: 100; display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity .2s; padding: 20px;
+    }
+    .img-viewer.open { opacity: 1; pointer-events: all; }
+    .img-viewer img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; }
+    .img-viewer-close {
+      position: absolute; top: calc(env(safe-area-inset-top,20px) + 12px); right: 16px;
+      background: rgba(255,255,255,.2); color: white; border: none;
+      border-radius: 50%; width: 36px; height: 36px; font-size: 18px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
 
     /* ── トースト ── */
     .toast {
       position: fixed;
       top: calc(env(safe-area-inset-top, 44px) + 70px);
-      left: 50%;
-      transform: translateX(-50%) translateY(-8px);
-      background: rgba(17,24,39,0.92);
-      color: white;
-      padding: 10px 20px;
-      border-radius: 20px;
-      font-size: 14px;
-      font-weight: 500;
-      opacity: 0;
-      transition: all 0.25s ease;
-      pointer-events: none;
-      white-space: nowrap;
-      z-index: 100;
+      left: 50%; transform: translateX(-50%) translateY(-8px);
+      background: rgba(17,24,39,.92); color: white;
+      padding: 10px 20px; border-radius: 20px;
+      font-size: 14px; font-weight: 500;
+      opacity: 0; transition: all .25s ease;
+      pointer-events: none; white-space: nowrap; z-index: 200;
       backdrop-filter: blur(8px);
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -337,23 +306,24 @@
   <main class="content" id="content"></main>
   <nav class="nav">
     <button class="nav-btn" id="nav-home" onclick="setTab('home')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
         <polyline points="9 22 9 12 15 12 15 22"/>
       </svg>
       ホーム
     </button>
-    <button class="nav-btn" id="nav-add" onclick="setTab('add')">
-      <div class="nav-add-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
-          <line x1="12" y1="5" x2="12" y2="19"/>
-          <line x1="5" y1="12" x2="19" y2="12"/>
-        </svg>
-      </div>
-      追加
+    <button class="nav-btn" id="nav-detail" onclick="setTab('detail')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="16" y1="13" x2="8" y2="13"/>
+        <line x1="16" y1="17" x2="8" y2="17"/>
+        <polyline points="10 9 9 9 8 9"/>
+      </svg>
+      詳細記録
     </button>
     <button class="nav-btn" id="nav-history" onclick="setTab('history')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
         <circle cx="12" cy="12" r="10"/>
         <polyline points="12 6 12 12 16 14"/>
       </svg>
@@ -361,235 +331,375 @@
     </button>
   </nav>
 </div>
+
+<!-- ボトムシートモーダル -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal-sheet" id="modal-sheet"></div>
+</div>
+
+<!-- 画像ビューア -->
+<div class="img-viewer" id="img-viewer" onclick="closeImgViewer()">
+  <button class="img-viewer-close" onclick="closeImgViewer()">✕</button>
+  <img id="img-viewer-img" src="" alt="写真">
+</div>
+
+<!-- 写真ファイル入力（非表示） -->
+<input type="file" id="photo-input" accept="image/*" style="display:none" onchange="handlePhoto(this)">
+
 <div class="toast" id="toast"></div>
 
 <script>
-  /* ─── データ定義 ─── */
-  const CATS = [
+  /* ─── 定数 ─── */
+  var CATS = [
     { id:'goods',  label:'グッズ',   emoji:'🎁', hex:'#D4537E', bg:'#FBF0F4' },
     { id:'travel', label:'遠征費',   emoji:'🚅', hex:'#1D9E75', bg:'#E8F7F2' },
     { id:'ticket', label:'チケット', emoji:'🎟️', hex:'#7F77DD', bg:'#F0EFFD' },
     { id:'sub',    label:'サブスク', emoji:'📺', hex:'#BA7517', bg:'#FEF4E4' },
   ];
 
-  /* ─── 状態 ─── */
-  let tab = 'home';
-  let expenses = [];
-  let form = freshForm();
+  /* ─── アプリ状態 ─── */
+  var APP = {
+    tab: 'home',
+    expenses: [],
+    form: null,
+    editingId: null, // null=新規, 数値=編集中ID
+  };
 
-  function freshForm() {
-    return { date: todayStr(), category: 'goods', amount: '', memo: '' };
-  }
+  /* ─── ユーティリティ ─── */
   function todayStr() { return new Date().toISOString().slice(0,10); }
-  function catById(id) { return CATS.find(c => c.id === id) || CATS[0]; }
-  function fmt(n) { return Number(n).toLocaleString('ja-JP') + '円'; }
+  function catById(id) { return CATS.find(function(c){ return c.id===id; }) || CATS[0]; }
+  function fmt(n) { return Number(n).toLocaleString('ja-JP')+'円'; }
+  function freshForm(catId) {
+    return { date:todayStr(), category:catId||'goods', amount:'', memo:'', photo:null };
+  }
+  function escHtml(s) {
+    return String(s)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
 
   /* ─── 永続化 ─── */
   function loadExpenses() {
-    try { expenses = JSON.parse(localStorage.getItem('oshi-expenses') || '[]'); }
-    catch(e) { expenses = []; }
+    try { APP.expenses = JSON.parse(localStorage.getItem('oshi-expenses')||'[]'); }
+    catch(e) { APP.expenses = []; }
   }
   function saveExpenses() {
-    localStorage.setItem('oshi-expenses', JSON.stringify(expenses));
-  }
-
-  /* ─── ナビ ─── */
-  function setTab(t) {
-    tab = t;
-    ['home','add','history'].forEach(id => {
-      document.getElementById('nav-' + id).classList.toggle('active', id === t);
-    });
-    renderContent();
-    window.scrollTo(0, 0);
+    try { localStorage.setItem('oshi-expenses', JSON.stringify(APP.expenses)); }
+    catch(e) { toast('⚠ 保存に失敗しました'); }
   }
 
   /* ─── トースト ─── */
   function toast(msg) {
-    const el = document.getElementById('toast');
+    var el = document.getElementById('toast');
     el.textContent = msg;
     el.classList.add('show');
-    setTimeout(() => el.classList.remove('show'), 2200);
+    setTimeout(function(){ el.classList.remove('show'); }, 2200);
   }
 
-  /* ─── 統計 ─── */
-  function stats(year) {
-    const yr = expenses.filter(e => e.date?.startsWith(String(year)));
-    const total = yr.reduce((s,e) => s + e.amount, 0);
-    const travel = yr.filter(e => e.category === 'travel').reduce((s,e) => s + e.amount, 0);
-    const byCat = CATS.map(c => ({
-      ...c,
-      total: yr.filter(e => e.category === c.id).reduce((s,e) => s + e.amount, 0),
-      count: yr.filter(e => e.category === c.id).length,
-    }));
-    return { yr, total, travel, byCat };
-  }
-
-  /* ─── ホーム ─── */
-  function renderHome() {
-    const year = new Date().getFullYear();
-    const { yr, total, travel, byCat } = stats(year);
-    const maxTotal = Math.max(...byCat.map(c => c.total), 1);
-
-    let html = `
-      <div class="summary-card">
-        <div class="summary-label">★ ${year}年の推し活合計</div>
-        <div class="summary-amount">${fmt(total)}</div>
-        <div class="summary-row">
-          <div class="summary-mini">遠征費<strong>${fmt(travel)}</strong></div>
-          <div class="summary-mini">記録件数<strong>${yr.length}件</strong></div>
-        </div>
-      </div>
-      <div class="section-title">カテゴリ別内訳</div>
-    `;
-
-    byCat.forEach(c => {
-      const pct = total > 0 ? Math.round(c.total / total * 100) : 0;
-      const barW = Math.round(c.total / maxTotal * 100);
-      html += `
-        <div class="cat-card">
-          <div class="cat-icon-box" style="background:${c.bg};">${c.emoji}</div>
-          <div class="cat-card-info">
-            <div class="cat-card-name">${c.label}</div>
-            <div class="cat-card-count">${c.count}件${total > 0 ? ' · ' + pct + '%' : ''}</div>
-            <div class="progress-bar">
-              <div class="progress-fill" style="width:${barW}%; background:${c.hex};"></div>
-            </div>
-          </div>
-          <div class="cat-card-amount" style="color:${c.hex};">${fmt(c.total)}</div>
-        </div>
-      `;
+  /* ─── タブ ─── */
+  function setTab(t) {
+    APP.tab = t;
+    ['home','detail','history'].forEach(function(id){
+      var el = document.getElementById('nav-'+id);
+      if (el) el.classList.toggle('active', id===t);
     });
-
-    if (yr.length === 0) {
-      html += `
-        <div class="empty">
-          <div class="emoji">✨</div>
-          <p>まだ記録がありません<br>下の「＋」から推し活を記録しよう！</p>
-        </div>
-      `;
-    }
-    return html;
+    renderContent();
+    window.scrollTo(0,0);
   }
 
-  /* ─── 追加フォーム ─── */
-  function renderAdd() {
-    return `
-      <div class="form-card">
-        <div class="form-group">
-          <label class="form-label">日付</label>
-          <input class="form-input" type="date" value="${form.date}"
-            onchange="form.date=this.value">
-        </div>
-        <div class="form-group">
-          <label class="form-label">カテゴリ</label>
-          <div class="cat-grid">
-            ${CATS.map(c => `
-              <button class="cat-option${form.category===c.id?' selected':''}"
-                style="${form.category===c.id?`border-color:${c.hex};background:${c.bg};color:${c.hex};`:''}"
-                onclick="form.category='${c.id}';renderContent();">
-                ${c.emoji} ${c.label}
-              </button>
-            `).join('')}
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">金額（円）</label>
-          <input class="form-input" id="amount-field" type="number" inputmode="numeric"
-            placeholder="例：3500" value="${form.amount}"
-            oninput="form.amount=this.value" min="1" step="1">
-        </div>
-        <div class="form-group">
-          <label class="form-label">メモ（任意）</label>
-          <input class="form-input" type="text"
-            placeholder="例：〇〇ライブ遠征、アクスタ購入"
-            value="${form.memo}" oninput="form.memo=this.value">
-        </div>
-        <div class="form-group">
-          <button class="btn-add" onclick="addExpense()">追加する ＋</button>
-        </div>
-      </div>
-    `;
+  /* ─── モーダル（新規追加）─── */
+  function openModal(catId) {
+    APP.editingId = null;
+    APP.form = freshForm(catId);
+    renderModal();
+    document.getElementById('modal-overlay').classList.add('open');
+    setTimeout(function(){
+      var f = document.getElementById('modal-amount');
+      if(f) f.focus();
+    }, 350);
   }
 
-  /* ─── 履歴 ─── */
-  function renderHistory() {
-    if (!expenses.length) {
-      return `<div class="empty"><div class="emoji">📋</div><p>記録がありません</p></div>`;
-    }
+  /* ─── モーダル（編集）─── */
+  function openEditModal(id) {
+    var exp = APP.expenses.find(function(e){ return e.id===id; });
+    if (!exp) return;
+    APP.editingId = id;
+    APP.form = {
+      date: exp.date,
+      category: exp.category,
+      amount: String(exp.amount),
+      memo: exp.memo||'',
+      photo: exp.photo||null,
+    };
+    renderModal();
+    document.getElementById('modal-overlay').classList.add('open');
+    setTimeout(function(){
+      var f = document.getElementById('modal-amount');
+      if(f) f.focus();
+    }, 350);
+  }
 
-    const sorted = [...expenses].sort((a,b) => b.date.localeCompare(a.date));
-    let lastMonth = '';
-    let html = '';
+  function handleOverlayClick(e) {
+    if (e.target===document.getElementById('modal-overlay')) closeModal();
+  }
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+  }
 
-    sorted.forEach(e => {
-      const month = e.date.slice(0,7);
-      if (month !== lastMonth) {
-        const [y, m] = month.split('-');
-        html += `<div class="month-label">${y}年${Number(m)}月</div>`;
-        lastMonth = month;
-      }
-      const c = catById(e.category);
-      html += `
-        <div class="history-item">
-          <div class="history-icon" style="background:${c.bg};">${c.emoji}</div>
-          <div class="history-info">
-            <div class="history-memo">${escHtml(e.memo || c.label)}</div>
-            <div class="history-meta">${e.date} · ${c.label}</div>
-          </div>
-          <div class="history-right">
-            <div class="history-amount" style="color:${c.hex};">${fmt(e.amount)}</div>
-            <button class="btn-del" onclick="delExpense(${e.id})" title="削除">✕</button>
-          </div>
-        </div>
-      `;
+  function renderModal() {
+    var f = APP.form;
+    if (!f) return;
+    var isEdit = APP.editingId !== null;
+    var title = isEdit ? '記録を編集' : '支出を記録';
+    var btnLabel = isEdit ? '更新する ✓' : '保存する ＋';
+
+    var catsHTML = CATS.map(function(c){
+      var sel = f.category===c.id;
+      var style = sel ? 'border-color:'+c.hex+';background:'+c.bg+';color:'+c.hex+';' : '';
+      return '<button class="cat-option'+(sel?' selected':'')+'" style="'+style+'"'
+        +' onclick="APP.form.category=\''+c.id+'\';renderModal();">'
+        +c.emoji+' '+c.label+'</button>';
+    }).join('');
+
+    var photoHTML = f.photo
+      ? '<div class="photo-preview">'
+        +'<img src="'+f.photo+'" alt="添付写真" onclick="viewModalPhoto()">'
+        +'<button class="photo-remove" onclick="APP.form.photo=null;renderModal();">✕</button>'
+        +'</div>'
+      : '<button class="photo-upload-btn" onclick="document.getElementById(\'photo-input\').click()">📷 写真を追加</button>';
+
+    document.getElementById('modal-sheet').innerHTML =
+      '<div class="modal-handle"><div class="modal-handle-bar"></div></div>'
+      +'<div class="modal-header">'
+      +'<button class="modal-cancel" onclick="closeModal()">キャンセル</button>'
+      +'<span class="modal-title">'+title+'</span>'
+      +'<button class="modal-ok" onclick="saveExpense()">保存</button>'
+      +'</div>'
+      +'<div class="form-group"><label class="form-label">カテゴリ</label>'
+      +'<div class="cat-grid">'+catsHTML+'</div></div>'
+      +'<div class="form-group"><label class="form-label">日付</label>'
+      +'<input class="form-input" type="date" value="'+f.date+'" onchange="APP.form.date=this.value"></div>'
+      +'<div class="form-group"><label class="form-label">金額（円）</label>'
+      +'<input class="form-input" id="modal-amount" type="number" inputmode="numeric"'
+      +' placeholder="例：3500" value="'+(f.amount||'')+'"'
+      +' oninput="APP.form.amount=this.value" min="1" step="1"></div>'
+      +'<div class="form-group"><label class="form-label">メモ（任意）</label>'
+      +'<input class="form-input" type="text" placeholder="例：〇〇ライブ遠征、アクスタ購入"'
+      +' value="'+escHtml(f.memo)+'" oninput="APP.form.memo=this.value"></div>'
+      +'<div class="form-group"><label class="form-label">レシート・写真（任意）</label>'
+      +photoHTML+'</div>'
+      +'<button class="btn-save" onclick="saveExpense()">'+btnLabel+'</button>';
+  }
+
+  /* ─── 写真処理 ─── */
+  function handlePhoto(input) {
+    var file = input.files[0];
+    if (!file) return;
+    compressImage(file).then(function(base64){
+      APP.form.photo = base64;
+      renderModal();
     });
-
-    return html;
+    input.value = '';
   }
-
-  function escHtml(s) {
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  function compressImage(file) {
+    return new Promise(function(resolve){
+      var reader = new FileReader();
+      reader.onload = function(e){
+        var img = new Image();
+        img.onload = function(){
+          var MAX=800, w=img.width, h=img.height;
+          if(w>MAX||h>MAX){ if(w>h){h=Math.round(h*MAX/w);w=MAX;}else{w=Math.round(w*MAX/h);h=MAX;} }
+          var cv=document.createElement('canvas');
+          cv.width=w; cv.height=h;
+          cv.getContext('2d').drawImage(img,0,0,w,h);
+          resolve(cv.toDataURL('image/jpeg',0.7));
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
   }
+  function viewImg(src) {
+    document.getElementById('img-viewer-img').src = src;
+    document.getElementById('img-viewer').classList.add('open');
+  }
+  function viewModalPhoto() { if(APP.form&&APP.form.photo) viewImg(APP.form.photo); }
+  function viewImgById(id) {
+    var exp = APP.expenses.find(function(e){ return e.id===Number(id); });
+    if(exp&&exp.photo) viewImg(exp.photo);
+  }
+  function closeImgViewer() { document.getElementById('img-viewer').classList.remove('open'); }
 
-  /* ─── 追加 ─── */
-  function addExpense() {
-    const amt = Number(form.amount);
-    if (!amt || amt <= 0) {
+  /* ─── 保存（新規 or 更新）─── */
+  function saveExpense() {
+    var f = APP.form;
+    var amt = Number(f.amount);
+    if (!amt||amt<=0) {
       toast('⚠ 金額を入力してください');
-      document.getElementById('amount-field')?.focus();
+      var field = document.getElementById('modal-amount');
+      if(field) field.focus();
       return;
     }
-    expenses.unshift({
-      id: Date.now(),
-      date: form.date,
-      category: form.category,
-      amount: amt,
-      memo: form.memo.trim(),
-    });
+    if (APP.editingId !== null) {
+      /* 編集 */
+      var idx = -1;
+      for(var i=0;i<APP.expenses.length;i++){
+        if(APP.expenses[i].id===APP.editingId){ idx=i; break; }
+      }
+      if (idx !== -1) {
+        APP.expenses[idx].date     = f.date;
+        APP.expenses[idx].category = f.category;
+        APP.expenses[idx].amount   = amt;
+        APP.expenses[idx].memo     = f.memo.trim();
+        APP.expenses[idx].photo    = f.photo||null;
+      }
+      toast('✓ 更新しました！');
+    } else {
+      /* 新規 */
+      APP.expenses.unshift({
+        id: Date.now(),
+        date: f.date, category: f.category,
+        amount: amt, memo: f.memo.trim(), photo: f.photo||null,
+      });
+      toast('✓ 記録しました！');
+    }
+    APP.editingId = null;
     saveExpenses();
-    form = freshForm();
-    toast('✓ 記録しました！');
-    setTab('home');
+    closeModal();
+    renderContent();
   }
 
   /* ─── 削除 ─── */
   function delExpense(id) {
     if (!confirm('この記録を削除しますか？')) return;
-    expenses = expenses.filter(e => e.id !== id);
+    APP.expenses = APP.expenses.filter(function(e){ return e.id!==id; });
     saveExpenses();
     renderContent();
     toast('削除しました');
   }
 
-  /* ─── レンダリング ─── */
-  function renderContent() {
-    const el = document.getElementById('content');
-    if (tab === 'home')    el.innerHTML = renderHome();
-    else if (tab === 'add')     el.innerHTML = renderAdd();
-    else                        el.innerHTML = renderHistory();
+  /* ─── 統計 ─── */
+  function getStats(year) {
+    var yr = APP.expenses.filter(function(e){ return e.date&&e.date.startsWith(String(year)); });
+    var total  = yr.reduce(function(s,e){ return s+e.amount; },0);
+    var travel = yr.filter(function(e){ return e.category==='travel'; }).reduce(function(s,e){ return s+e.amount; },0);
+    var byCat  = CATS.map(function(c){
+      var items = yr.filter(function(e){ return e.category===c.id; });
+      return { id:c.id, label:c.label, emoji:c.emoji, hex:c.hex, bg:c.bg,
+               total: items.reduce(function(s,e){ return s+e.amount; },0), count:items.length };
+    });
+    return { yr:yr, total:total, travel:travel, byCat:byCat };
+  }
 
-    const year = new Date().getFullYear();
-    document.getElementById('header-sub').textContent = `${year}年の推し活を記録しよう`;
+  /* ─── ホーム描画 ─── */
+  function renderHome() {
+    var year = new Date().getFullYear();
+    var s = getStats(year);
+    var maxT = Math.max.apply(null, s.byCat.map(function(c){ return c.total; }).concat([1]));
+
+    var html = '<div class="summary-card">'
+      +'<div class="summary-label">★ '+year+'年の推し活合計</div>'
+      +'<div class="summary-amount">'+fmt(s.total)+'</div>'
+      +'<div class="summary-row">'
+      +'<div class="summary-mini">遠征費<strong>'+fmt(s.travel)+'</strong></div>'
+      +'<div class="summary-mini">記録件数<strong>'+s.yr.length+'件</strong></div>'
+      +'</div></div>'
+      +'<div class="section-title">カテゴリ別（タップして記録）</div>';
+
+    s.byCat.forEach(function(c){
+      var barW = Math.round(c.total/maxT*100);
+      html += '<button class="cat-card" onclick="openModal(\''+c.id+'\')">'
+        +'<div class="cat-icon-box" style="background:'+c.bg+';">'+c.emoji+'</div>'
+        +'<div class="cat-card-info">'
+        +'<div class="cat-card-name">'+c.label+'</div>'
+        +'<div class="cat-card-count">'+c.count+'件</div>'
+        +'<div class="progress-bar"><div class="progress-fill" style="width:'+barW+'%;background:'+c.hex+';"></div></div>'
+        +'</div>'
+        +'<div class="cat-card-amount" style="color:'+c.hex+';">'+fmt(c.total)+'</div>'
+        +'</button>';
+    });
+
+    if (s.yr.length===0) {
+      html += '<div class="empty"><div class="emoji">✨</div>'
+        +'<p>まだ記録がありません<br>カテゴリをタップして記録しよう！</p></div>';
+    }
+    return html;
+  }
+
+  /* ─── 詳細記録描画 ─── */
+  function renderDetail() {
+    if (!APP.expenses.length) {
+      return '<div class="empty"><div class="emoji">📋</div><p>記録がありません</p></div>';
+    }
+    var sorted = APP.expenses.slice().sort(function(a,b){ return b.date.localeCompare(a.date); });
+    var html = '';
+    sorted.forEach(function(e){
+      var c = catById(e.category);
+      var memoHTML  = e.memo ? '<div class="detail-memo">'+escHtml(e.memo)+'</div>' : '';
+      var photoHTML = e.photo
+        ? '<img class="detail-photo" src="'+e.photo+'" alt="写真" onclick="viewImgById('+e.id+')">'
+        : '';
+      html += '<div class="detail-card">'
+        +'<div class="detail-card-header">'
+        +'<div class="detail-header-left">'
+        +'<div class="detail-icon" style="background:'+c.bg+';">'+c.emoji+'</div>'
+        +'<div><div class="detail-cat">'+c.label+'</div><div class="detail-date">'+e.date+'</div></div>'
+        +'</div>'
+        +'<div class="detail-amount" style="color:'+c.hex+';">'+fmt(e.amount)+'</div>'
+        +'</div>'
+        +memoHTML
+        +photoHTML
+        +'<div class="detail-actions">'
+        +'<button class="btn-action edit" onclick="openEditModal('+e.id+')">✏️ 編集</button>'
+        +'<button class="btn-action del"  onclick="delExpense('+e.id+')">🗑️ 削除</button>'
+        +'</div></div>';
+    });
+    return html;
+  }
+
+  /* ─── 履歴描画 ─── */
+  function renderHistory() {
+    if (!APP.expenses.length) {
+      return '<div class="empty"><div class="emoji">📋</div><p>記録がありません</p></div>';
+    }
+    var sorted = APP.expenses.slice().sort(function(a,b){ return b.date.localeCompare(a.date); });
+    var lastMonth='', html='';
+    sorted.forEach(function(e){
+      var month = e.date.slice(0,7);
+      if (month!==lastMonth) {
+        var parts = month.split('-');
+        html += '<div class="month-label">'+parts[0]+'年'+Number(parts[1])+'月</div>';
+        lastMonth = month;
+      }
+      var c = catById(e.category);
+      var thumbHTML = e.photo
+        ? '<img class="history-thumb" src="'+e.photo+'" alt="写真" onclick="viewImgById('+e.id+')">'
+        : '';
+      html += '<div class="history-item">'
+        +'<div class="history-icon" style="background:'+c.bg+';">'+c.emoji+'</div>'
+        +'<div class="history-info">'
+        +'<div class="history-memo">'+escHtml(e.memo||c.label)+'</div>'
+        +'<div class="history-meta">'+e.date+' · '+c.label+'</div>'
+        +'</div>'
+        +'<div class="history-right">'
+        +thumbHTML
+        +'<div class="history-amount" style="color:'+c.hex+';">'+fmt(e.amount)+'</div>'
+        +'<button class="btn-icon edit" onclick="openEditModal('+e.id+')" title="編集">✏️</button>'
+        +'<button class="btn-icon del"  onclick="delExpense('+e.id+')"    title="削除">🗑️</button>'
+        +'</div></div>';
+    });
+    return html;
+  }
+
+  /* ─── 描画 ─── */
+  function renderContent() {
+    var el = document.getElementById('content');
+    if (!el) return;
+    if      (APP.tab==='home')    el.innerHTML = renderHome();
+    else if (APP.tab==='detail')  el.innerHTML = renderDetail();
+    else                          el.innerHTML = renderHistory();
+    var sub = document.getElementById('header-sub');
+    if (sub) sub.textContent = new Date().getFullYear()+'年の推し活を記録しよう';
   }
 
   /* ─── 初期化 ─── */
@@ -597,10 +707,9 @@
   document.getElementById('nav-home').classList.add('active');
   renderContent();
 
-  /* ─── Service Worker ─── */
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('./sw.js').catch(function(){});
     });
   }
 </script>
