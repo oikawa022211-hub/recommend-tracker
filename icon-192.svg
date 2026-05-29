@@ -1,4 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
-  <rect width="192" height="192" rx="40" fill="#D4537E"/>
-  <text x="96" y="130" font-size="100" text-anchor="middle" font-family="Apple Color Emoji, Segoe UI Emoji, sans-serif">⭐</text>
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#E8618C"/>
+      <stop offset="100%" stop-color="#B83868"/>
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="44" fill="url(#g)"/>
+  <text x="96" y="94" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif"
+    font-weight="700" font-size="46" text-anchor="middle" fill="white">推し活</text>
+  <text x="96" y="132" font-family="'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif"
+    font-weight="400" font-size="24" text-anchor="middle" fill="rgba(255,255,255,0.72)">家計簿</text>
 </svg>
