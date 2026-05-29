@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#D4537E">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="推し活家計簿">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-192.svg">
+  <link rel="icon" href="icon-192.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <title>推し活家計簿</title>
+  <style>
+    :root {
+      --pink:       #D4537E;
+      --pink-dark:  #A33D60;
+      --pink-bg:    #FBF0F4;
+      --green:      #1D9E75;
+      --green-bg:   #E8F7F2;
+      --purple:     #7F77DD;
+      --purple-bg:  #F0EFFD;
+      --amber:      #BA7517;
+      --amber-bg:   #FEF4E4;
+      --bg:         #F5F5F7;
+      --surface:    #FFFFFF;
+      --text:       #111827;
+      --text-sub:   #6B7280;
+      --text-hint:  #9CA3AF;
+      --border:     rgba(0,0,0,0.08);
+      --nav-h:      60px;
+      --radius-sm:  10px;
+      --radius-md:  14px;
+      --radius-lg:  20px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100svh;
+      overscroll-behavior: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    #app {
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100svh;
+      position: relative;
+      background: var(--bg);
+    }
+
+    /* ── ヘッダー ── */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: env(safe-area-inset-top, 44px) 20px 14px;
+    }
+    .header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--text);
+    }
+    .header h1 .star { color: var(--pink); }
+    .header-sub {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin-top: 2px;
+    }
+
+    /* ── コンテンツ ── */
+    .content {
+      padding: 16px 16px calc(var(--nav-h) + env(safe-area-inset-bottom, 16px) + 16px);
+      min-height: 100svh;
+    }
+
+    /* ── サマリーカード ── */
+    .summary-card {
+      background: linear-gradient(135deg, var(--pink) 0%, var(--pink-dark) 100%);
+      color: white;
+      border-radius: var(--radius-lg);
+      padding: 20px 22px;
+      margin-bottom: 14px;
+    }
+    .summary-label { font-size: 13px; opacity: 0.85; margin-bottom: 8px; }
+    .summary-amount { font-size: 34px; font-weight: 700; letter-spacing: -1px; line-height: 1; }
+    .summary-row {
+      display: flex;
+      gap: 16px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.25);
+    }
+    .summary-mini { font-size: 12px; opacity: 0.85; }
+    .summary-mini strong { display: block; font-size: 14px; font-weight: 700; opacity: 1; margin-top: 1px; }
+
+    /* ── カテゴリカード ── */
+    .section-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-sub);
+      margin-bottom: 8px;
+    }
+    .cat-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      margin-bottom: 8px;
+    }
+    .cat-icon-box {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 21px;
+      flex-shrink: 0;
+    }
+    .cat-card-info { flex: 1; min-width: 0; }
+    .cat-card-name { font-size: 14px; font-weight: 500; }
+    .cat-card-count { font-size: 11px; color: var(--text-sub); margin-top: 1px; }
+    .progress-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 6px; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+    .cat-card-amount { font-size: 15px; font-weight: 700; flex-shrink: 0; }
+
+    /* ── フォーム ── */
+    .form-card {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      padding: 18px 16px;
+    }
+    .form-group { margin-bottom: 18px; }
+    .form-group:last-child { margin-bottom: 0; }
+    .form-label { font-size: 13px; font-weight: 500; color: var(--text-sub); display: block; margin-bottom: 7px; }
+    .form-input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg);
+      font-family: inherit;
+      font-size: 15px;
+      color: var(--text);
+      appearance: none;
+      -webkit-appearance: none;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus { outline: none; border-color: var(--pink); background: var(--surface); }
+
+    /* カテゴリ選択 */
+    .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .cat-option {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 11px 12px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .cat-option:active { transform: scale(0.97); }
+    .cat-option.selected { border-width: 2px; }
+
+    /* 追加ボタン */
+    .btn-add {
+      width: 100%;
+      padding: 15px;
+      background: var(--pink);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.02em;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .btn-add:active { opacity: 0.88; transform: scale(0.99); }
+    .btn-add:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── 履歴 ── */
+    .month-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-sub);
+      margin: 16px 0 8px;
+      letter-spacing: 0.04em;
+    }
+    .month-label:first-child { margin-top: 0; }
+    .history-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface);
+      border-radius: var(--radius-sm);
+      padding: 11px 12px;
+      margin-bottom: 6px;
+    }
+    .history-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .history-info { flex: 1; min-width: 0; }
+    .history-memo { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .history-meta { font-size: 11px; color: var(--text-sub); margin-top: 2px; }
+    .history-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .history-amount { font-size: 14px; font-weight: 700; }
+    .btn-del {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-hint);
+      padding: 5px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1;
+      transition: color 0.15s, background 0.15s;
+    }
+    .btn-del:hover { color: #E24B4A; background: #FFF0F0; }
+
+    /* ── 空状態 ── */
+    .empty {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--text-hint);
+    }
+    .empty .emoji { font-size: 44px; margin-bottom: 12px; }
+    .empty p { font-size: 14px; line-height: 1.7; }
+
+    /* ── ナビゲーション ── */
+    .nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 430px;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      z-index: 40;
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .nav-btn {
+      flex: 1;
+      padding: 10px 4px 8px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      font-family: inherit;
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--text-hint);
+      transition: color 0.15s;
+      user-select: none;
+    }
+    .nav-btn.active { color: var(--pink); }
+    .nav-btn svg { width: 24px; height: 24px; stroke-width: 2; }
+    .nav-add-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--pink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      margin-bottom: -2px;
+      box-shadow: 0 4px 12px rgba(212,83,126,0.4);
+      transition: transform 0.15s;
+    }
+    .nav-btn.active .nav-add-icon,
+    .nav-btn:active .nav-add-icon { transform: scale(0.93); }
+
+    /* ── トースト ── */
+    .toast {
+      position: fixed;
+      top: calc(env(safe-area-inset-top, 44px) + 70px);
+      left: 50%;
+      transform: translateX(-50%) translateY(-8px);
+      background: rgba(17,24,39,0.92);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 500;
+      opacity: 0;
+      transition: all 0.25s ease;
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+
+<div id="app">
+  <header class="header">
+    <h1><span class="star">★</span> 推し活家計簿</h1>
+    <p class="header-sub" id="header-sub"></p>
+  </header>
+  <main class="content" id="content"></main>
+  <nav class="nav">
+    <button class="nav-btn" id="nav-home" onclick="setTab('home')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      ホーム
+    </button>
+    <button class="nav-btn" id="nav-add" onclick="setTab('add')">
+      <div class="nav-add-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <line x1="12" y1="5" x2="12" y2="19"/>
+          <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+      </div>
+      追加
+    </button>
+    <button class="nav-btn" id="nav-history" onclick="setTab('history')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="10"/>
+        <polyline points="12 6 12 12 16 14"/>
+      </svg>
+      履歴
+    </button>
+  </nav>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+  /* ─── データ定義 ─── */
+  const CATS = [
+    { id:'goods',  label:'グッズ',   emoji:'🎁', hex:'#D4537E', bg:'#FBF0F4' },
+    { id:'travel', label:'遠征費',   emoji:'🚅', hex:'#1D9E75', bg:'#E8F7F2' },
+    { id:'ticket', label:'チケット', emoji:'🎟️', hex:'#7F77DD', bg:'#F0EFFD' },
+    { id:'sub',    label:'サブスク', emoji:'📺', hex:'#BA7517', bg:'#FEF4E4' },
+  ];
+
+  /* ─── 状態 ─── */
+  let tab = 'home';
+  let expenses = [];
+  let form = freshForm();
+
+  function freshForm() {
+    return { date: todayStr(), category: 'goods', amount: '', memo: '' };
+  }
+  function todayStr() { return new Date().toISOString().slice(0,10); }
+  function catById(id) { return CATS.find(c => c.id === id) || CATS[0]; }
+  function fmt(n) { return Number(n).toLocaleString('ja-JP') + '円'; }
+
+  /* ─── 永続化 ─── */
+  function loadExpenses() {
+    try { expenses = JSON.parse(localStorage.getItem('oshi-expenses') || '[]'); }
+    catch(e) { expenses = []; }
+  }
+  function saveExpenses() {
+    localStorage.setItem('oshi-expenses', JSON.stringify(expenses));
+  }
+
+  /* ─── ナビ ─── */
+  function setTab(t) {
+    tab = t;
+    ['home','add','history'].forEach(id => {
+      document.getElementById('nav-' + id).classList.toggle('active', id === t);
+    });
+    renderContent();
+    window.scrollTo(0, 0);
+  }
+
+  /* ─── トースト ─── */
+  function toast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 2200);
+  }
+
+  /* ─── 統計 ─── */
+  function stats(year) {
+    const yr = expenses.filter(e => e.date?.startsWith(String(year)));
+    const total = yr.reduce((s,e) => s + e.amount, 0);
+    const travel = yr.filter(e => e.category === 'travel').reduce((s,e) => s + e.amount, 0);
+    const byCat = CATS.map(c => ({
+      ...c,
+      total: yr.filter(e => e.category === c.id).reduce((s,e) => s + e.amount, 0),
+      count: yr.filter(e => e.category === c.id).length,
+    }));
+    return { yr, total, travel, byCat };
+  }
+
+  /* ─── ホーム ─── */
+  function renderHome() {
+    const year = new Date().getFullYear();
+    const { yr, total, travel, byCat } = stats(year);
+    const maxTotal = Math.max(...byCat.map(c => c.total), 1);
+
+    let html = `
+      <div class="summary-card">
+        <div class="summary-label">★ ${year}年の推し活合計</div>
+        <div class="summary-amount">${fmt(total)}</div>
+        <div class="summary-row">
+          <div class="summary-mini">遠征費<strong>${fmt(travel)}</strong></div>
+          <div class="summary-mini">記録件数<strong>${yr.length}件</strong></div>
+        </div>
+      </div>
+      <div class="section-title">カテゴリ別内訳</div>
+    `;
+
+    byCat.forEach(c => {
+      const pct = total > 0 ? Math.round(c.total / total * 100) : 0;
+      const barW = Math.round(c.total / maxTotal * 100);
+      html += `
+        <div class="cat-card">
+          <div class="cat-icon-box" style="background:${c.bg};">${c.emoji}</div>
+          <div class="cat-card-info">
+            <div class="cat-card-name">${c.label}</div>
+            <div class="cat-card-count">${c.count}件${total > 0 ? ' · ' + pct + '%' : ''}</div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width:${barW}%; background:${c.hex};"></div>
+            </div>
+          </div>
+          <div class="cat-card-amount" style="color:${c.hex};">${fmt(c.total)}</div>
+        </div>
+      `;
+    });
+
+    if (yr.length === 0) {
+      html += `
+        <div class="empty">
+          <div class="emoji">✨</div>
+          <p>まだ記録がありません<br>下の「＋」から推し活を記録しよう！</p>
+        </div>
+      `;
+    }
+    return html;
+  }
+
+  /* ─── 追加フォーム ─── */
+  function renderAdd() {
+    return `
+      <div class="form-card">
+        <div class="form-group">
+          <label class="form-label">日付</label>
+          <input class="form-input" type="date" value="${form.date}"
+            onchange="form.date=this.value">
+        </div>
+        <div class="form-group">
+          <label class="form-label">カテゴリ</label>
+          <div class="cat-grid">
+            ${CATS.map(c => `
+              <button class="cat-option${form.category===c.id?' selected':''}"
+                style="${form.category===c.id?`border-color:${c.hex};background:${c.bg};color:${c.hex};`:''}"
+                onclick="form.category='${c.id}';renderContent();">
+                ${c.emoji} ${c.label}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">金額（円）</label>
+          <input class="form-input" id="amount-field" type="number" inputmode="numeric"
+            placeholder="例：3500" value="${form.amount}"
+            oninput="form.amount=this.value" min="1" step="1">
+        </div>
+        <div class="form-group">
+          <label class="form-label">メモ（任意）</label>
+          <input class="form-input" type="text"
+            placeholder="例：〇〇ライブ遠征、アクスタ購入"
+            value="${form.memo}" oninput="form.memo=this.value">
+        </div>
+        <div class="form-group">
+          <button class="btn-add" onclick="addExpense()">追加する ＋</button>
+        </div>
+      </div>
+    `;
+  }
+
+  /* ─── 履歴 ─── */
+  function renderHistory() {
+    if (!expenses.length) {
+      return `<div class="empty"><div class="emoji">📋</div><p>記録がありません</p></div>`;
+    }
+
+    const sorted = [...expenses].sort((a,b) => b.date.localeCompare(a.date));
+    let lastMonth = '';
+    let html = '';
+
+    sorted.forEach(e => {
+      const month = e.date.slice(0,7);
+      if (month !== lastMonth) {
+        const [y, m] = month.split('-');
+        html += `<div class="month-label">${y}年${Number(m)}月</div>`;
+        lastMonth = month;
+      }
+      const c = catById(e.category);
+      html += `
+        <div class="history-item">
+          <div class="history-icon" style="background:${c.bg};">${c.emoji}</div>
+          <div class="history-info">
+            <div class="history-memo">${escHtml(e.memo || c.label)}</div>
+            <div class="history-meta">${e.date} · ${c.label}</div>
+          </div>
+          <div class="history-right">
+            <div class="history-amount" style="color:${c.hex};">${fmt(e.amount)}</div>
+            <button class="btn-del" onclick="delExpense(${e.id})" title="削除">✕</button>
+          </div>
+        </div>
+      `;
+    });
+
+    return html;
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  /* ─── 追加 ─── */
+  function addExpense() {
+    const amt = Number(form.amount);
+    if (!amt || amt <= 0) {
+      toast('⚠ 金額を入力してください');
+      document.getElementById('amount-field')?.focus();
+      return;
+    }
+    expenses.unshift({
+      id: Date.now(),
+      date: form.date,
+      category: form.category,
+      amount: amt,
+      memo: form.memo.trim(),
+    });
+    saveExpenses();
+    form = freshForm();
+    toast('✓ 記録しました！');
+    setTab('home');
+  }
+
+  /* ─── 削除 ─── */
+  function delExpense(id) {
+    if (!confirm('この記録を削除しますか？')) return;
+    expenses = expenses.filter(e => e.id !== id);
+    saveExpenses();
+    renderContent();
+    toast('削除しました');
+  }
+
+  /* ─── レンダリング ─── */
+  function renderContent() {
+    const el = document.getElementById('content');
+    if (tab === 'home')    el.innerHTML = renderHome();
+    else if (tab === 'add')     el.innerHTML = renderAdd();
+    else                        el.innerHTML = renderHistory();
+
+    const year = new Date().getFullYear();
+    document.getElementById('header-sub').textContent = `${year}年の推し活を記録しよう`;
+  }
+
+  /* ─── 初期化 ─── */
+  loadExpenses();
+  document.getElementById('nav-home').classList.add('active');
+  renderContent();
+
+  /* ─── Service Worker ─── */
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    });
+  }
+</script>
+</body>
+</html>
